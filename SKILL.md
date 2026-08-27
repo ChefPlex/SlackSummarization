@@ -11,7 +11,7 @@ disable-model-invocation: false
 
 Reads all channels in a named Slack sidebar section (as defined in `slack_sections.md`), summarizes activity over the last 30 days, and surfaces hot callouts for the last 24 hours and last 3 days at the top.
 
-Optionally writes the brief directly to a Slack canvas — either replacing an existing one or creating a new one.
+Optionally writes the brief directly to a Slack canvas - either replacing an existing one or creating a new one.
 
 ## Usage
 
@@ -65,11 +65,11 @@ Stop and wait for input.
 > "Section '[arg]' not found in slack_sections.md. Available sections: [list]"
 Stop.
 
-**Skip these channel types** — do not attempt to read them:
-- 🔗 Shared/External channels (marked `⚠️ UNKNOWN` ID) — API cannot read them
+**Skip these channel types** - do not attempt to read them:
+- 🔗 Shared/External channels (marked `⚠️ UNKNOWN` ID) - API cannot read them
 - Any row with ID containing `⚠️` or `UNKNOWN`
 
-**Note which channels are already covered by existing cron scripts** (from the "Cross-Section Overlap" table in `slack_sections.md`) — flag these in the output so the user knows the coverage already exists elsewhere.
+**Note which channels are already covered by existing cron scripts** (from the "Cross-Section Overlap" table in `slack_sections.md`) - flag these in the output so the user knows the coverage already exists elsewhere.
 
 ---
 
@@ -86,7 +86,7 @@ For each readable channel in the section, call `slack_read_channel` with:
 
 Use the `oldest` parameter set to `cutoff_30d` to avoid fetching older messages.
 
-**Batch the reads to avoid rate limits** — process 3 channels per batch, pause between batches:
+**Batch the reads to avoid rate limits** - process 3 channels per batch, pause between batches:
 - Batch reads together in groups of 3 using parallel tool calls
 - If a channel returns an error (e.g., `channel_not_found`, `not_in_channel`), note it as "⚠️ Not accessible" and continue
 
@@ -160,37 +160,37 @@ Use this structure:
 
 ### Formatting Rules
 
-#### References — STRICT RULES (violations degrade canvas rendering)
+#### References - STRICT RULES (violations degrade canvas rendering)
 
 - **Channel headers** (section titles) use clickable Slack deep links:
   `[#channel-name](https://your-workspace.slack.com/archives/CXXXXXXXXX)`
-  — inaccessible channels go in **Coverage Notes only**, never as a bare `## #channel-name` header
+ - inaccessible channels go in **Coverage Notes only**, never as a bare `## #channel-name` header
 
 - **Inline channel refs** in body text MUST use canvas ref format:
   ✅ `![](#CXXXXXXXXX)`
-  ❌ NEVER `<#CXXXXXXXXX>` — raw Slack mention tags do not render in canvases
+ ❌ NEVER `<#CXXXXXXXXX>` - raw Slack mention tags do not render in canvases
 
 - **Inline user refs** in body text MUST use canvas ref format:
   ✅ `![](@UXXXXXXX)`
-  ❌ NEVER `<@UXXXXXXX>` — raw Slack mention tags do not render in canvases
-  — This applies everywhere: HOT bullets, channel summaries, `cc` lines, all body text
+ ❌ NEVER `<@UXXXXXXX>` - raw Slack mention tags do not render in canvases
+ - This applies everywhere: HOT bullets, channel summaries, `cc` lines, all body text
 
 - **GUS work items** always linked:
   `[W-XXXXXXX](https://gus.lightning.force.com/lightning/r/ADM_Work__c/W-XXXXXXX/view)`
-  — Never mention a W-number as plain text
+ - Never mention a W-number as plain text
 
 - **Canvas IDs** mentioned in body text always linked:
   `[Canvas F0XXXXXXX](https://your-workspace.slack.com/docs/TXXXXXXXXX/F0XXXXXXX)`
-  — Never mention a canvas ID (F0...) as plain text
+ - Never mention a canvas ID (F0...) as plain text
 
-- **PRs, ERRs, MRs, KAs, any linked artifact**: always include the URL — never mention without a link
+- **PRs, ERRs, MRs, KAs, any linked artifact**: always include the URL - never mention without a link
 
 #### HOT Section Format
 
-HOT bullets lead with the **substance** (what was decided, escalated, or changed) — not with the person's name. Person and timestamp are secondary context:
+HOT bullets lead with the **substance** (what was decided, escalated, or changed) - not with the person's name. Person and timestamp are secondary context:
 
-✅ `- ⚠️ Cold-start fix plan published — deploy PR #911 to prod by May 12, full prod May 14 in report-only mode (Virender Singh, 11:12 AM, ![](#C06KA4ENG3S))`
-❌ `- 🟡 **#inline-detections | Virender Singh @ 11:12 AM** — Published cold-start fix plan...`
+✅ `- ⚠️ Cold-start fix plan published - deploy PR #911 to prod by May 12, full prod May 14 in report-only mode (Virender Singh, 11:12 AM, ![](#C06KA4ENG3S))`
+❌ `- 🟡 **#inline-detections | Virender Singh @ 11:12 AM** - Published cold-start fix plan...`
 
 Severity indicators are required on every HOT bullet:
 - 🚨 critical/active blocker
@@ -209,17 +209,17 @@ Replace `F0XXXXXXX` with the actual canvas ID being written to.
 
 #### General
 
-- **Bullets over paragraphs** — dense, scannable, no filler prose
-- **DO NOT dumb down the content** — include specific technical details: exact PR numbers, GUS IDs, user names, timestamps, detection counts, error messages. A vague summary is worse than useless.
-- **Only report what actually happened** — do not fabricate or carry forward stale info as new activity
+- **Bullets over paragraphs** - dense, scannable, no filler prose
+- **DO NOT dumb down the content** - include specific technical details: exact PR numbers, GUS IDs, user names, timestamps, detection counts, error messages. A vague summary is worse than useless.
+- **Only report what actually happened** - do not fabricate or carry forward stale info as new activity
 
 ---
 
 ### Content Quality Rules
 
 - **HOT sections**: Only include items that are genuinely time-sensitive or actionable. Don't pad with routine noise.
-- **30-day per-channel summaries**: Identify the 3–5 most important threads or patterns. What is this channel actually being used for right now? What's the dominant concern?
-- **Cross-channel themes**: This is the highest-value output. Connect the dots — what do these channels collectively signal about program health, risk posture, or upcoming decisions?
+- **30-day per-channel summaries**: Identify the 3-5 most important threads or patterns. What is this channel actually being used for right now? What's the dominant concern?
+- **Cross-channel themes**: This is the highest-value output. Connect the dots - what do these channels collectively signal about program health, risk posture, or upcoming decisions?
 - **Stale channels**: If a channel had zero messages in the 30-day window, say: "No activity in the last 30 days." in one line. Don't pad.
 - **RAG status**: If you can infer a RAG status for the section's overall health from the signal, include it at the top: 🟢 GREEN / 🟡 YELLOW / 🔴 RED with a one-sentence rationale.
 
@@ -229,14 +229,14 @@ Replace `F0XXXXXXX` with the actual canvas ID being written to.
 
 **If `$CANVAS_ARG` is `new`:**
 1. Call `slack_create_canvas` with:
-   - `title`: `[Section Name] — Slack Section Brief`
+ - `title`: `[Section Name] - Slack Section Brief`
    - `content`: the full brief Markdown composed in PHASE 3, with the self-link line inserted as the second line:
      `> 📎 [This canvas](https://your-workspace.slack.com/docs/TXXXXXXXXX/[canvas-id]) | Last updated: [date/time PDT]`
      (use the canvas ID returned by `slack_create_canvas`)
 2. Report the new canvas ID and URL to the user:
-   > "✅ Canvas created: [Section Name] — Slack Section Brief  
+ > "✅ Canvas created: [Section Name] - Slack Section Brief 
    > URL: https://your-workspace.slack.com/docs/TXXXXXXXXX/[canvas-id]  
-   > Canvas ID: [canvas-id] — save this to reuse with `--canvas [canvas-id]`"
+ > Canvas ID: [canvas-id] - save this to reuse with `--canvas [canvas-id]`"
 
 **If `$CANVAS_ARG` is a canvas ID (starts with `F`):**
 1. Prepend the self-link as the second line of the brief content:
@@ -249,7 +249,7 @@ Replace `F0XXXXXXX` with the actual canvas ID being written to.
    > "✅ Canvas updated: https://your-workspace.slack.com/docs/TXXXXXXXXX/[canvas-id]"
 
 **If canvas write fails:**
-Report the error clearly — do not silently skip. The conversation output is still valid.
+Report the error clearly - do not silently skip. The conversation output is still valid.
 
 ---
 
@@ -278,7 +278,7 @@ After the brief, offer:
 | `slack_sections.md` not found | "Cannot find slack_sections.md. Place it at ~/.claude/skills/slack-section-brief/slack_sections.md or in your current working directory. See README.md for setup instructions." |
 | Section not in registry | List available sections and stop |
 | All channels inaccessible | Report each failure, explain likely cause (private channel, bot not added) |
-| Channel returns 0 messages in 30d | State "No activity in the last 30 days" — don't skip silently |
+| Channel returns 0 messages in 30d | State "No activity in the last 30 days" - don't skip silently |
 | Shared/external channel | Skip read attempt, note in Coverage Notes |
 | Rate limit hit | Wait and retry; note in output if retries exhausted |
 | `--canvas new` fails | Report the error; output is still valid in the conversation |
