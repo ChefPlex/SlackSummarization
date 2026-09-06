@@ -57,3 +57,8 @@ This repo is not actively maintained. It reflects the state of the work at the p
 ---
 
 *Part of the [ChefPlex](https://github.com/ChefPlex) portfolio. Built by [Eric White](https://www.linkedin.com/in/edwhite).*
+
+## License
+
+Copyright (c) 2026 Eric White. Licensed under [CC BY 4.0](LICENSE): use it, adapt it, put it to
+work in your own program. Credit is the only condition.
